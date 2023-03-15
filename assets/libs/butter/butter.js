@@ -8,7 +8,8 @@
         this.defaults = {
             wrapperId: 'butter',
             wrapperDamper: 0.07,
-            cancelOnTouch: false
+            cancelOnTouch: false,
+            animateEvent: () => {}
         }
         
         this.validateOptions = function(ops) {
@@ -29,6 +30,7 @@
         this.active = false;
         this.wrapperHeight;
         this.bodyHeight;
+        this.animateEvent;
     };
 
     Butter.prototype = {
@@ -36,11 +38,13 @@
         init: function(options) {
             if (options) {
                 this.validateOptions(options);
+                this.options;
             }
 
             this.active = true;
             this.resizing = false;
             this.wrapperDamper = this.defaults.wrapperDamper;
+            this.animateEvent = this.defaults.animateEvent;
             this.wrapperId = this.defaults.wrapperId;
             this.cancelOnTouch = this.defaults.cancelOnTouch;
 
@@ -65,6 +69,9 @@
             var scrollY = (document.scrollingElement != undefined) ? document.scrollingElement.scrollTop : (document.documentElement.scrollTop || 0.0);
             this.wrapperOffset += (scrollY - this.wrapperOffset) * this.wrapperDamper;
             this.wrapper.style.transform = 'translate3d(0,' + (-this.wrapperOffset.toFixed(2)) + 'px, 0)';
+            if(scrollY != Math.round(this.wrapperOffset)){
+                this.animateEvent();    
+            }
         },
 
         checkResize: function() {
